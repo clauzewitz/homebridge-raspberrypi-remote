@@ -1,0 +1,18 @@
+{
+	"bridge": {
+		"name": "Homebridge",
+		"username": "CC:22:3D:E3:CE:30",
+		"port": 51826,
+		"pin": "123-45-568"
+	},
+
+	"accessories": [
+		{
+			"accessory": "WiFiRoomSensor",
+			"name": "WiFi Room Sensor",
+			"ip": "192.168.0.2",
+			"mac": "00-00-00-00-00-00",
+			"interval": 5000
+		}
+	]
+}
