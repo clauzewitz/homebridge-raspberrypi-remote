@@ -4,6 +4,7 @@ const exec = require('child_process').exec;
 const inherits = require('util').inherits;
 const version = require('./package.json').version;
 const count = Math.pow(10, 2);
+let deviceInfo = {};
 let Service;
 let Characteristic;
 let logger;
@@ -12,7 +13,7 @@ module.exports = function (homebridge) {
 	Service = homebridge.hap.Service;
 	Characteristic = homebridge.hap.Characteristic;
 
-	homebridge.registerAccessory('homebridge-raspberrypi-remote', 'RespberryPi', RespberryPi);
+	homebridge.registerAccessory('homebridge-raspberrypi-remote', 'RaspberryPi', RaspberryPi);
 }
 
 function initCustomService() {
@@ -20,7 +21,7 @@ function initCustomService() {
 	 * Service "RaspberryPi" Based on Service.Switch
 	 */
 	let raspberryPiUUID = '00000049-0000-1000-8000-0026BB765291';
-	Service.RespberryPi = function (displayName, subType) {
+	Service.RaspberryPi = function (displayName, subType) {
 		Service.call(this, displayName, raspberryPiUUID, subType);
 
 		// Required Characteristics
@@ -30,11 +31,101 @@ function initCustomService() {
 		this.addOptionalCharacteristic(Characteristic.Name);
 	}
 
-	inherits(Service.RespberryPi, Service);
-	Service.RespberryPi.UUID = raspberryPiUUID;
+	inherits(Service.RaspberryPi, Service);
+	Service.RaspberryPi.UUID = raspberryPiUUID;
 }
 
-function RespberryPi(log, config) {
+function getDeviceInfo() {
+	exec('cat /proc/cpuinfo', function (error, stdout, stderr) {
+		if (error) {
+			logger(error);
+		} else {
+			if (stdout) {
+				let revisionArr = stdout.match(/Revision\s*:\s*(.*)/);
+				let serialArr = stdout.match(/Serial\s*:\s*(.*)/);
+				let model = 'RespberryPi ';
+
+				switch (revisionArr[1]) {
+					case '0002':
+					case '0003':
+						// RAM size: 256MB
+						model += 'Model B Rev 1';
+						break;
+					case '0004':
+					case '0005':
+					case '0006':
+						// RAM size: 256MB
+						model += 'Model B Rev 2';
+						break;
+					case '0007':
+					case '0008':
+					case '0009':
+						// RAM size: 256MB
+						model += 'Model A';
+						break;
+					case '000d':
+					case '000e':
+					case '000f':
+						// RAM size: 512MB
+						model += 'Model B Rev 2';
+						break;
+					case '0010':
+					case '0013':
+					case '900032':
+						// RAM size: 512MB
+						model += 'Model B+';
+						break;
+					case '0011':
+					case '0014':
+						// RAM size: 512MB
+						model += 'Compute Module';
+						break;
+					case '0012':
+					case '0015':
+						// RAM size: 256MB
+						model += 'Model A+';
+						break;
+					case 'a01041':
+						// RAM size: 1GB
+						model += '2 Model B v1.1';
+						break;
+					case 'a22042':
+						// RAM size: 1GB
+						model += '2 Model B v1.2';
+						break;
+					case '900092':
+						// RAM size: 512MB
+						model += 'Zero v1.2';
+						break;
+					case '900093':
+						// RAM size: 512MB
+						model += 'Zero v1.3';
+						break;
+					case '9000C1':
+						// RAM size: 512MB
+						model += 'Zero W';
+						break;
+					case 'a02082':
+						// RAM size: 1GB
+						model += '3 Model B';
+						break;
+					case 'a020d3':
+					default:
+						// RAM size: 1GB
+						model += '3 Model B+';
+						break;
+				}
+
+				deviceInfo = {
+					model: model,
+					serialNumber: serialArr[1]
+				};
+			}
+		}
+	});
+}
+
+function RaspberryPi(log, config) {
 	logger = log;
 
 	this.services = [];
@@ -50,9 +141,10 @@ function RespberryPi(log, config) {
 	this.memoryUsage = undefined;
 	this.temperature = undefined;
 
+	getDeviceInfo();
 	initCustomService();
 
-	this.service = new Service.RespberryPi(this.name);
+	this.service = new Service.RaspberryPi(this.name, 'Shutdown');
 	this.serviceInfo = new Service.AccessoryInformation();
 
 	this.service
@@ -62,15 +154,15 @@ function RespberryPi(log, config) {
 
 	this.serviceInfo
 		.setCharacteristic(Characteristic.Manufacturer, 'Raspberry Pi Foundation')
+		.setCharacteristic(Characteristic.Model, deviceInfo.model)
+		.setCharacteristic(Characteristic.SerialNumber, deviceInfo.serialNumber)
 		.setCharacteristic(Characteristic.FirmwareRevision, version);
-	
-	this.getDeviceInfo();
 
 	this.services.push(this.service);
 	this.services.push(this.serviceInfo);
 
 	if (this.showCpuUsage) {
-		this.cpuSensorService = new Service.TemperatureSensor(this.name + ' Cpu');
+		this.cpuSensorService = new Service.TemperatureSensor(this.name + ' CPU', 'CPU');
 	
 		this.cpuSensorService
 			.getCharacteristic(Characteristic.CurrentTemperature)
@@ -80,7 +172,7 @@ function RespberryPi(log, config) {
 	}
 
 	if (this.showMemoryUsage) {
-		this.memorySensorService = new Service.TemperatureSensor(this.name + ' Memory');
+		this.memorySensorService = new Service.TemperatureSensor(this.name + ' Memory', 'Memory');
 	
 		this.memorySensorService
 			.getCharacteristic(Characteristic.CurrentTemperature)
@@ -90,7 +182,7 @@ function RespberryPi(log, config) {
 	}
 
 	if (this.showTemperature) {
-		this.temperatureSensorService = new Service.TemperatureSensor(this.name + ' Temperature');
+		this.temperatureSensorService = new Service.TemperatureSensor(this.name + ' Temperature', 'Temperature');
 	
 		this.temperatureSensorService
 			.getCharacteristic(Characteristic.CurrentTemperature)
@@ -100,7 +192,7 @@ function RespberryPi(log, config) {
 	}
 
 	if (this.enableReboot) {
-		this.rebootService = new Service.Switch(this.name + ' Reboot');
+		this.rebootService = new Service.Switch(this.name + ' Reboot', 'Reboot');
 
 		this.rebootService
 			.getCharacteristic(Characteristic.On)
@@ -113,110 +205,19 @@ function RespberryPi(log, config) {
 	this.discover();
 }
 
-RespberryPi.prototype = {
+RaspberryPi.prototype = {
 	discover: function () {
 		const that = this;
 
 		setInterval(function () {
-			that.updateCpuUsage.bind(that);
-			that.updateMemoryUsage.bind(that);
-			that.updateTemperature.bind(that);
+			that.updateCpuUsage();
+			that.updateMemoryUsage();
+			that.updateTemperature();
 		}, that.interval);
 	},
 
-	getDeviceInfo: function () {
-		const that = this;
-
-		exec('cat /proc/cpuinfo', function (error, stdout, stderr) {
-			if (error) {
-				logger(error);
-			} else {
-				if (stdout) {
-					let revisionArr = stdout.match(/Revision\s*:\s*(.*)/);
-					let serialArr = stdout.match(/Serial\s*:\s*(.*)/);
-					let model = 'RespberryPi ';
-
-					switch (revisionArr[1]) {
-						case '0002':
-						case '0003':
-							// RAM size: 256MB
-							model += 'Model B Rev 1';
-							break;
-						case '0004':
-						case '0005':
-						case '0006':
-							// RAM size: 256MB
-							model += 'Model B Rev 2';
-							break;
-						case '0007':
-						case '0008':
-						case '0009':
-							// RAM size: 256MB
-							model += 'Model A';
-							break;
-						case '000d':
-						case '000e':
-						case '000f':
-							// RAM size: 512MB
-							model += 'Model B Rev 2';
-							break;
-						case '0010':
-						case '0013':
-						case '900032':
-							// RAM size: 512MB
-							model += 'Model B+';
-							break;
-						case '0011':
-						case '0014':
-							// RAM size: 512MB
-							model += 'Compute Module';
-							break;
-						case '0012':
-						case '0015':
-							// RAM size: 256MB
-							model += 'Model A+';
-							break;
-						case 'a01041':
-							// RAM size: 1GB
-							model += '2 Model B v1.1';
-							break;
-						case 'a22042':
-							// RAM size: 1GB
-							model += '2 Model B v1.2';
-							break;
-						case '900092':
-							// RAM size: 512MB
-							model += 'Zero v1.2';
-							break;
-						case '900093':
-							// RAM size: 512MB
-							model += 'Zero v1.3';
-							break;
-						case '9000C1':
-							// RAM size: 512MB
-							model += 'Zero W';
-							break;
-						case 'a02082':
-							// RAM size: 1GB
-							model += '3 Model B';
-							break;
-						case 'a020d3':
-						default:
-							// RAM size: 1GB
-							model += '3 Model B+';
-							break;
-					}
-
-					that.serviceInfo
-						.setCharacteristic(Characteristic.Model, model)
-						.setCharacteristic(Characteristic.SerialNumber, serialArr[1]);
-				}
-			}
-		});
-	},
-
 	getPowerState: function (callback) {
-		callback(null, this.cleaningState);
+		callback(null, this.operatingState);
 	},
 
 	setPowerState: function (state, callback) {
