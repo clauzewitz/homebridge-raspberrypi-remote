@@ -1,15 +1,17 @@
 {
-	"name": "homebridge-raspberrypi",
-	"version": "1.0.5",
-	"description": "Raspberrypi plugin for Homebridge.",
+	"name": "homebridge-raspberrypi-remote",
+	"version": "1.0.0",
+	"description": "Raspberry Pi Remote plugin for Homebridge.",
 	"license": "MIT",
 	"keywords": [
 		"homebridge-plugin",
-		"raspberrypi"
+		"raspberry pi",
+		"raspberrypi",
+		"remote"
 	],
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/clauzewitz/homebridge-raspberrypi"
+		"url": "https://github.com/clauzewitz/homebridge-raspberrypi-remote"
 	},
 	"engines": {
 		"node": ">=0.12.0",

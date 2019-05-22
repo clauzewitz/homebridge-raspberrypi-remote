@@ -1,51 +1,48 @@
-[![npm version](https://badge.fury.io/js/homebridge-raspberrypi.svg)](https://badge.fury.io/js/homebridge-raspberrypi)
+[![npm version](https://badge.fury.io/js/homebridge-raspberrypi-remote.svg)](https://badge.fury.io/js/homebridge-raspberrypi-remote)
 
 # homebridge-raspberrypi
 
-This is Raspberrypi plugin for [Homebridge](https://github.com/nfarina/homebridge). 
+This is Raspberry Pi Remote plugin for [Homebridge](https://github.com/nfarina/homebridge). 
 
 
 
 ### Features
 
-* Display raspberrypi state.
+* Display Raspberry Pi state.
 
 
 
 ### Installation
 
-1. Install required library.
+1. Install required packages.
 
    ```
-   apt-get install nmap
+   npm install -g homebridge-raspberrypi-remote
    ```
 
-2. Install required packages.
-
-   ```
-   npm install -g homebridge-raspberrypi
-   ```
-
-3. Check the MAC address and IP address of WiFi Room Sensor.
+3. Check the OS of Raspberry Pi.
 
 4. Add these values to `config.json`.
 
     ```
       "accessories": [
         {
-          "accessory": "WiFiRoomSensor",
-          "name": "WiFi Room Sensor",
-          "ip": "TOKEN_FROM_STEP_3",
-          "mac": "TOKEN_FROM_STEP_3",
-          "interval": 5000
+          "accessory": "RespberryPi",
+          "name": "Respberry Pi",
+          "os": "linux",
+          "interval": 5000,
+          "showCpuUsage": false,
+			    "showMemoryUsage": false,
+			    "showTemperature": true,
+			    "enableReboot": true
         }
       ]
     ```
 
-4. Restart Homebridge, and your WiFi Room Sensor will be added to Home app.
+4. Restart Homebridge, and your Raspberry Pi will be added to Home app.
 
 
 
 ### License
 
-See the [LICENSE](https://github.com/clauzewitz/homebridge-wifi-room-sensor/blob/master/LICENSE.md) file for license rights and limitations (MIT).
+See the [LICENSE](https://github.com/clauzewitz/homebridge-raspberrypi-remote/blob/master/LICENSE.md) file for license rights and limitations (MIT).

@@ -8,11 +8,14 @@
 
 	"accessories": [
 		{
-			"accessory": "WiFiRoomSensor",
-			"name": "WiFi Room Sensor",
-			"ip": "192.168.0.2",
-			"mac": "00-00-00-00-00-00",
-			"interval": 5000
+			"accessory": "RespberryPi",
+			"name": "Respberry Pi",
+			"os": "linux",
+			"interval": 600000,
+			"showCpuUsage": false,
+			"showMemoryUsage": false,
+			"showTemperature": true,
+			"enableReboot": true
 		}
 	]
 }
