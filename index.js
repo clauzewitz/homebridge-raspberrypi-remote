@@ -281,7 +281,7 @@ RaspberryPi.prototype = {
 
 		const that = this;
 
-		exec('top -n 1 | grep -i cpu\(s\)| awk \'{print $5}\' | tr -d "%id," | awk \'{print 100-$1}\'', function (error, stdout, stderr) {
+		exec('top -n 1 | grep -i cpu\\(s\\)| awk \'{print $2}\'', function (error, stdout, stderr) {
 			if (error) {
 				logger(error);
 			} else {
