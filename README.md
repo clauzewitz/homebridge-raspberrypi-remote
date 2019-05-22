@@ -27,8 +27,8 @@ This is Raspberry Pi Remote plugin for [Homebridge](https://github.com/nfarina/h
     ```
       "accessories": [
         {
-          "accessory": "RespberryPi",
-          "name": "Respberry Pi",
+          "accessory": "RaspberryPi",
+          "name": "Raspberry Pi",
           "os": "linux",
           "interval": 5000,
           "showCpuUsage": false,
