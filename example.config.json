@@ -8,10 +8,10 @@
 
 	"accessories": [
 		{
-			"accessory": "RespberryPi",
-			"name": "Respberry Pi",
+			"accessory": "RaspberryPi",
+			"name": "Raspberry Pi",
 			"os": "linux",
-			"interval": 600000,
+			"interval": 60000,
 			"showCpuUsage": false,
 			"showMemoryUsage": false,
 			"showTemperature": true,
