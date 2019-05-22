@@ -20,9 +20,9 @@ This is Raspberry Pi Remote plugin for [Homebridge](https://github.com/nfarina/h
    npm install -g homebridge-raspberrypi-remote
    ```
 
-3. Check the OS of Raspberry Pi.
+2. Check the OS of Raspberry Pi.
 
-4. Add these values to `config.json`.
+3. Add these values to `config.json`.
 
     ```
       "accessories": [
