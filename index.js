@@ -1,6 +1,7 @@
 'use strict';
 
 const exec = require('child_process').exec;
+const inherits = require('util').inherits;
 const version = require('./package.json').version;
 const count = Math.pow(10, 2);
 let Service;
@@ -50,17 +51,6 @@ function RespberryPi(log, config) {
 	this.memoryUsage = undefined;
 	this.temperature = undefined;
 
-	this.buttonGroup = [
-		{
-			code: 0,
-			value: 'Reboot'
-		},
-		{
-			code: 1,
-			value: 'Shutdown'
-		}
-	];
-
 	initCustomService();
 
 	this.service = new Service.RespberryPi(this.name);
@@ -74,10 +64,6 @@ function RespberryPi(log, config) {
 	this.serviceInfo
 		.setCharacteristic(Characteristic.Manufacturer, 'Raspberry Pi Foundation')
 		.setCharacteristic(Characteristic.FirmwareRevision, version);
-
-	for (var button in buttonGroup) {
-
-	}
 
 	this.services.push(this.service);
 	this.services.push(this.serviceInfo);
