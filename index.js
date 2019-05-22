@@ -17,14 +17,13 @@ module.exports = function (homebridge) {
 
 function initCustomService() {
 	/**
-	 * Service "RaspberryPi" Based on Service.ServiceLabel
+	 * Service "RaspberryPi" Based on Service.Switch
 	 */
-	let raspberryPiUUID = '000000CC-0000-1000-8000-0026BB765291';
+	let raspberryPiUUID = '00000049-0000-1000-8000-0026BB765291';
 	Service.RespberryPi = function (displayName, subType) {
 		Service.call(this, displayName, raspberryPiUUID, subType);
 
 		// Required Characteristics
-		this.addCharacteristic(Characteristic.ServiceLabelNamespace);
 		this.addCharacteristic(Characteristic.On);
 
 		// Optional Characteristics
@@ -41,7 +40,7 @@ function RespberryPi(log, config) {
 	this.services = [];
 	this.name = config.name || 'Respberry Pi';
 	this.os = config.os || 'linux';
-	this.interval = Number(config.interval) || 600000;
+	this.interval = Number(config.interval) || 60000;
 	this.showCpuUsage = config.showCpuUsage || false;
 	this.showMemoryUsage = config.showMemoryUsage || false;
 	this.showTemperature = config.showTemperature || false;
@@ -64,6 +63,8 @@ function RespberryPi(log, config) {
 	this.serviceInfo
 		.setCharacteristic(Characteristic.Manufacturer, 'Raspberry Pi Foundation')
 		.setCharacteristic(Characteristic.FirmwareRevision, version);
+	
+	this.getDeviceInfo();
 
 	this.services.push(this.service);
 	this.services.push(this.serviceInfo);
@@ -115,13 +116,11 @@ function RespberryPi(log, config) {
 RespberryPi.prototype = {
 	discover: function () {
 		const that = this;
-		
-		that.getDeviceInfo(this);
 
 		setInterval(function () {
-			that.updateCpuUsage.bind(this);
-			that.updateMemoryUsage.bind(this);
-			that.updateTemperature.bind(this);
+			that.updateCpuUsage.bind(that);
+			that.updateMemoryUsage.bind(that);
+			that.updateTemperature.bind(that);
 		}, that.interval);
 	},
 
@@ -339,7 +338,7 @@ RespberryPi.prototype = {
 
 		const that = this;
 
-		exec('./current_temperature', function (error, stdout, stderr) {
+		exec('/usr/lib/node_modules/homebridge-raspberrypi-remote/current_temperature.sh', function (error, stdout, stderr) {
 			if (error) {
 				logger(error);
 			} else {
