@@ -32,9 +32,9 @@ This is Raspberry Pi Remote plugin for [Homebridge](https://github.com/nfarina/h
           "os": "linux",
           "interval": 5000,
           "showCpuUsage": false,
-			    "showMemoryUsage": false,
-			    "showTemperature": true,
-			    "enableReboot": true
+          "showMemoryUsage": false,
+          "showTemperature": true,
+          "enableReboot": true
         }
       ]
     ```
