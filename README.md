@@ -1,19 +1,16 @@
 [![npm version](https://badge.fury.io/js/homebridge-raspberrypi-remote.svg)](https://badge.fury.io/js/homebridge-raspberrypi-remote)
 
 # homebridge-raspberrypi-remote
-
 This is Raspberry Pi Remote plugin for [Homebridge](https://github.com/nfarina/homebridge). 
 
 
 
 ### Features
-
 * Display Raspberry Pi state.
 
 
 
 ### Installation
-
 1. Install required packages.
 
    ```
